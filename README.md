@@ -1,1 +1,1 @@
-I added a incremental counter logic to the counter button to increase by 1 every click. 
+I added a incremental counter logic to the counter button to increase by 1 every click.
