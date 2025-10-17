@@ -11,13 +11,15 @@ let counter: number = 0;
 
 // Create basic HTML structure
 document.body.innerHTML = `
-  <h1>CMPM 121 Project</h1>
+  <h1>Lollipop Licker 🍭</h1>
   <p>Counter: <span id="counter">0</span></p>
   <button id="increment">Click Me!</button>
 `;
 
 // Add click handler
 const button = document.getElementById("increment")!;
+
+button.innerHTML = "🍭"; // added emoji
 const counterElement = document.getElementById("counter")!;
 
 function updateCounterDisplay() {
