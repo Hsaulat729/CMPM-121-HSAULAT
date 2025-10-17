@@ -1,37 +1,36 @@
-/**
- * Main entry point for the CMPM 121 Section Activity
- * Simple starter template - customize to your heart's content!
- */
-
 console.log("🎮 CMPM 121 - Starting...");
 
-// Simple counter for demonstration
-
+// Counter state
 let counter: number = 0;
 
 // Create basic HTML structure
 document.body.innerHTML = `
   <h1>Lollipop Licker 🍭</h1>
-  <p>Counter: <span id="counter">0</span></p>
-  <button id="increment">Click Me!</button>
+
+  <!-- New div to show tongue licks -->
+  <div id="licksDisplay">0 tongue licks</div>
+
+  <button id="increment"></button>
 `;
 
-// Add click handler
+// Grab DOM references
 const button = document.getElementById("increment")!;
+const licksDisplay = document.getElementById("licksDisplay")!;
 
-button.innerHTML = "🍭"; // added emoji
-const counterElement = document.getElementById("counter")!;
+// 🍭 Added emoji to the button
+button.innerHTML = "🍭";
 
+// Function to update the counter display
 function updateCounterDisplay() {
-  if (counterElement) {
-    counterElement.textContent = `${counter}`;
-  }
+  licksDisplay.textContent = `${counter} tongue licks`;
 }
 
+// Add click handler to increment the counter
 button.addEventListener("click", () => {
-  // This looks like to a good place to add some logic!
-
   counter++;
   updateCounterDisplay();
-  console.log("I have these thingies:", button, counterElement, counter);
+  console.log("I have these thingies:", button, licksDisplay, counter);
 });
+
+// Initialize the display once at startup
+updateCounterDisplay();
