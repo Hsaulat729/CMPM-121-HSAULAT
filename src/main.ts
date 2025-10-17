@@ -29,8 +29,12 @@ function updateCounterDisplay() {
 button.addEventListener("click", () => {
   counter++;
   updateCounterDisplay();
-  console.log("I have these thingies:", button, licksDisplay, counter);
+  console.log("Manual Lick:", button, licksDisplay, counter);
 });
-
+setInterval(() => {
+  counter++;
+  updateCounterDisplay();
+  console.log("Automatic lick:", counter);
+}, 1000);
 // Initialize the display once at startup
 updateCounterDisplay();
