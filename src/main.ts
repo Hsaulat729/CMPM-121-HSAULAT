@@ -1,15 +1,24 @@
 console.log("🎮 CMPM 121 - Starting...");
 
 // Counter state
-let counter: number = 0;
-let growthRate: number = 0; // start at 0 (no auto growth at first)
+let honey: number = 0;
+let productionRate: number = 0; // honey per second
 
-// Upgrade data
-const upgrades = [
-  { id: "upgradeA", name: "🐝 Worker Bee", cost: 10, rate: 0.1, count: 0 },
-  { id: "upgradeB", name: "🍯 Beekeeper", cost: 100, rate: 2.0, count: 0 },
+// Define the Item interface
+interface Item {
+  id: string;
+  name: string;
+  cost: number;
+  rate: number;
+  count: number;
+}
+
+// Data-driven list of all purchasable items
+const availableItems: Item[] = [
+  { id: "workerBee", name: "🐝 Worker Bee", cost: 10, rate: 0.1, count: 0 },
+  { id: "beekeeper", name: "🍯 Beekeeper", cost: 100, rate: 2.0, count: 0 },
   {
-    id: "upgradeC",
+    id: "hiveExpansion",
     name: "🏡 Hive Expansion",
     cost: 1000,
     rate: 50.0,
@@ -20,74 +29,70 @@ const upgrades = [
 // Create basic HTML structure
 document.body.innerHTML = `
   <h1>Honey Harvester 🍯</h1>
-
   <p>Grow your buzzing empire and produce the sweetest honey in the hive!</p>
 
   <div id="honeyDisplay">0 honey collected</div>
-
   <div id="rateDisplay">Production rate: 0.0 honey/sec</div>
 
   <button id="harvest"></button>
 
-  <div id="upgrades"></div>
+  <div id="items"></div>
 `;
 
 // Grab DOM references
-const button = document.getElementById("harvest")!;
+const harvestButton = document.getElementById("harvest")!;
 const honeyDisplay = document.getElementById("honeyDisplay")!;
 const rateDisplay = document.getElementById("rateDisplay")!;
-const upgradesContainer = document.getElementById("upgrades")!;
+const itemsContainer = document.getElementById("items")!;
 
-// Add emoji to the main harvest button
-button.innerHTML = "🍯";
+// Main harvest button
+harvestButton.innerHTML = "🍯";
 
-// Dynamically create upgrade buttons
-upgrades.forEach((u) => {
+// Dynamically create buttons for all items
+availableItems.forEach((item) => {
   const btn = document.createElement("button");
-  btn.id = u.id;
-  btn.textContent = `${u.name} (${u.cost.toFixed(1)} honey)`;
+  btn.id = item.id;
+  btn.textContent = `${item.name} (${item.cost.toFixed(1)} honey)`;
   btn.disabled = true;
-  upgradesContainer.appendChild(btn);
+  itemsContainer.appendChild(btn);
 
-  // Upgrade purchase logic with price scaling
+  // Purchase logic
   btn.addEventListener("click", () => {
-    if (counter >= u.cost) {
-      counter -= u.cost;
-      u.count++;
-      growthRate += u.rate;
-
-      // Price increases by 15% after each purchase
-      u.cost = parseFloat((u.cost * 1.15).toFixed(2));
-
+    if (honey >= item.cost) {
+      honey -= item.cost;
+      item.count++;
+      productionRate += item.rate;
+      // Increase cost by 15 % after each purchase
+      item.cost = parseFloat((item.cost * 1.15).toFixed(2));
       updateDisplay();
       console.log(
-        `${u.name} purchased! Total: ${u.count}, new cost: ${u.cost}`,
+        `${item.name} purchased! Total: ${item.count}, new cost: ${item.cost}`,
       );
     }
   });
 });
 
-// Function to update all displays
+// Update displays and enable/disable buttons
 function updateDisplay() {
-  honeyDisplay.textContent = `${counter.toFixed(1)} honey collected`;
+  honeyDisplay.textContent = `${honey.toFixed(1)} honey collected`;
   rateDisplay.textContent = `Production rate: ${
-    growthRate.toFixed(1)
+    productionRate.toFixed(1)
   } honey/sec`;
 
-  upgrades.forEach((u) => {
-    const btn = document.getElementById(u.id)! as HTMLButtonElement;
-    btn.disabled = counter < u.cost;
-    btn.textContent = `${u.name} (${
-      u.cost.toFixed(1)
-    } honey) — Owned: ${u.count}`;
+  availableItems.forEach((item) => {
+    const btn = document.getElementById(item.id)! as HTMLButtonElement;
+    btn.disabled = honey < item.cost;
+    btn.textContent = `${item.name} (${
+      item.cost.toFixed(1)
+    } honey) — Owned: ${item.count}`;
   });
 }
 
-// Manual harvest click
-button.addEventListener("click", () => {
-  counter++;
+// Manual harvest (clicking)
+harvestButton.addEventListener("click", () => {
+  honey++;
   updateDisplay();
-  console.log("Manual harvest:", counter);
+  console.log("Manual harvest:", honey);
 });
 
 let lastTime = performance.now();
@@ -96,11 +101,11 @@ function update(currentTime: number) {
   const deltaTime = (currentTime - lastTime) / 1000;
   lastTime = currentTime;
 
-  counter += growthRate * deltaTime;
+  honey += productionRate * deltaTime;
   updateDisplay();
 
   requestAnimationFrame(update);
 }
 
+updateDisplay();
 requestAnimationFrame(update);
-updateDisplay(); // Initialize display once at startup
