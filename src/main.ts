@@ -11,18 +11,51 @@ interface Item {
   cost: number;
   rate: number;
   count: number;
+  description: string;
 }
 
 // Data-driven list of all purchasable items
 const availableItems: Item[] = [
-  { id: "workerBee", name: "🐝 Worker Bee", cost: 10, rate: 0.1, count: 0 },
-  { id: "beekeeper", name: "🍯 Beekeeper", cost: 100, rate: 2.0, count: 0 },
+  {
+    id: "workerBee",
+    name: "🐝 Worker Bee",
+    cost: 10,
+    rate: 0.1,
+    count: 0,
+    description: "A loyal worker that gathers small drops of honey.",
+  },
+  {
+    id: "beekeeper",
+    name: "🍯 Beekeeper",
+    cost: 100,
+    rate: 2.0,
+    count: 0,
+    description: "An expert caretaker who doubles honey output.",
+  },
   {
     id: "hiveExpansion",
     name: "🏡 Hive Expansion",
     cost: 1000,
     rate: 50.0,
     count: 0,
+    description: "Expands your hive, allowing for industrial-scale honey flow.",
+  },
+  {
+    id: "queenBee",
+    name: "👑 Queen Bee",
+    cost: 5000,
+    rate: 200.0,
+    count: 0,
+    description: "The royal heart of the colony, inspiring faster production.",
+  },
+  {
+    id: "honeyPlanet",
+    name: "🪐 Honey Planet",
+    cost: 25000,
+    rate: 1000.0,
+    count: 0,
+    description:
+      "An entire planet devoted to harvesting endless golden nectar.",
   },
 ];
 
@@ -54,6 +87,10 @@ availableItems.forEach((item) => {
   btn.id = item.id;
   btn.textContent = `${item.name} (${item.cost.toFixed(1)} honey)`;
   btn.disabled = true;
+
+  // Tooltip / hover text shows description
+  btn.title = item.description;
+
   itemsContainer.appendChild(btn);
 
   // Purchase logic
@@ -62,8 +99,10 @@ availableItems.forEach((item) => {
       honey -= item.cost;
       item.count++;
       productionRate += item.rate;
-      // Increase cost by 15 % after each purchase
+
+      // Increase cost by 15% after each purchase
       item.cost = parseFloat((item.cost * 1.15).toFixed(2));
+
       updateDisplay();
       console.log(
         `${item.name} purchased! Total: ${item.count}, new cost: ${item.cost}`,
@@ -85,6 +124,7 @@ function updateDisplay() {
     btn.textContent = `${item.name} (${
       item.cost.toFixed(1)
     } honey) — Owned: ${item.count}`;
+    btn.title = item.description;
   });
 }
 
