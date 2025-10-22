@@ -2,9 +2,9 @@ console.log("🎮 CMPM 121 - Starting...");
 
 // Counter state
 let counter: number = 0;
-let growthRate: number = 0; //  start at 0 (no auto growth at first)
+let growthRate: number = 0; // start at 0 (no auto growth at first)
 
-// ✅ Upgrade data
+// Upgrade data
 const upgrades = [
   { id: "upgradeA", name: "👅 Tongue Trainee", cost: 10, rate: 0.1, count: 0 },
   {
@@ -39,14 +39,14 @@ const licksDisplay = document.getElementById("licksDisplay")!;
 const rateDisplay = document.getElementById("rateDisplay")!;
 const upgradesContainer = document.getElementById("upgrades")!;
 
-// 🍭 Added emoji to the button
+// Add emoji to the main lick button
 button.innerHTML = "🍭";
 
-// ✅ Dynamically create upgrade buttons
+// Dynamically create upgrade buttons
 upgrades.forEach((u) => {
   const btn = document.createElement("button");
   btn.id = u.id;
-  btn.textContent = `${u.name} (${u.cost} licks)`;
+  btn.textContent = `${u.name} (${u.cost.toFixed(1)} licks)`;
   btn.disabled = true;
   upgradesContainer.appendChild(btn);
 
@@ -56,8 +56,14 @@ upgrades.forEach((u) => {
       counter -= u.cost; // spend licks
       u.count++; // track how many purchased
       growthRate += u.rate; // increase growth rate
+
+      // Step 7 change: automatically increase item price by 15%
+      u.cost = parseFloat((u.cost * 1.15).toFixed(2));
+
       updateCounterDisplay();
-      console.log(`${u.name} purchased! Total: ${u.count}`);
+      console.log(
+        `${u.name} purchased! Total: ${u.count}, new cost: ${u.cost}`,
+      );
     }
   });
 });
@@ -67,11 +73,13 @@ function updateCounterDisplay() {
   licksDisplay.textContent = `${counter.toFixed(1)} tongue licks`;
   rateDisplay.textContent = `Growth rate: ${growthRate.toFixed(1)} licks/sec`;
 
-  //  Enable or disable each upgrade button based on lick count
+  // Enable or disable each upgrade button based on lick count
   upgrades.forEach((u) => {
     const btn = document.getElementById(u.id)! as HTMLButtonElement;
     btn.disabled = counter < u.cost;
-    btn.textContent = `${u.name} (${u.cost} licks) — Owned: ${u.count}`;
+    btn.textContent = `${u.name} (${
+      u.cost.toFixed(1)
+    } licks) — Owned: ${u.count}`;
   });
 }
 
