@@ -1,28 +1,25 @@
-console.log("🎮 CMPM 121 - Starting...");
+console.log("🎮 CMPM 121 - Starting..."); // ❌ Removed for deployment
 
 /* ----------------------------------------------------
     GAME STATE
-   Tracks the player's current honey and total production
 ----------------------------------------------------- */
-let honey: number = 0; // Current honey owned
-let productionRate: number = 0; // Honey earned per second
+let honey: number = 0;
+let productionRate: number = 0;
 
 /* ----------------------------------------------------
-    UPGRADE INTERFACE (formerly "Item")
-   Represents a purchasable upgrade that boosts production
+    UPGRADE INTERFACE
 ----------------------------------------------------- */
 interface Upgrade {
   id: string;
   name: string;
   cost: number;
-  rate: number; // Honey/sec provided by this upgrade
-  count: number; // How many of this upgrade have been purchased
+  rate: number;
+  count: number;
   description: string;
 }
 
 /* ----------------------------------------------------
-    DATA-DRIVEN UPGRADE LIST
-   All upgrades are defined here so UI + logic are created automatically.
+    UPGRADE DATA
 ----------------------------------------------------- */
 const availableUpgrades: Upgrade[] = [
   {
@@ -47,7 +44,7 @@ const availableUpgrades: Upgrade[] = [
     cost: 1000,
     rate: 50.0,
     count: 0,
-    description: "Expands your hive, allowing for industrial-scale honey flow.",
+    description: "Expands your hive for industrial-scale honey flow.",
   },
   {
     id: "queenBee",
@@ -55,7 +52,7 @@ const availableUpgrades: Upgrade[] = [
     cost: 5000,
     rate: 200.0,
     count: 0,
-    description: "The royal heart of the colony, inspiring faster production.",
+    description: "The heart of the colony, inspiring faster production.",
   },
   {
     id: "honeyPlanet",
@@ -63,14 +60,12 @@ const availableUpgrades: Upgrade[] = [
     cost: 25000,
     rate: 1000.0,
     count: 0,
-    description:
-      "An entire planet devoted to harvesting endless golden nectar.",
+    description: "A whole planet dedicated to honey harvesting.",
   },
 ];
 
 /* ----------------------------------------------------
-    INITIAL HTML LAYOUT
-   Injected here so no external HTML file is required.
+    HTML SETUP
 ----------------------------------------------------- */
 document.body.innerHTML = `
   <h1>Honey Harvester 🍯</h1>
@@ -86,19 +81,16 @@ document.body.innerHTML = `
 
 /* ----------------------------------------------------
     DOM REFERENCES
-   Caching important HTML elements for performance + readability.
 ----------------------------------------------------- */
 const harvestButton = document.getElementById("harvest")!;
 const honeyDisplay = document.getElementById("honeyDisplay")!;
 const rateDisplay = document.getElementById("rateDisplay")!;
 const upgradesContainer = document.getElementById("upgrades")!;
 
-// Set main click button appearance
 harvestButton.innerHTML = "🍯";
 
 /* ----------------------------------------------------
-    UPGRADE BUTTON CREATION
-   Automatically creates one button per upgrade using data-driven design.
+    CREATE UPGRADE BUTTONS
 ----------------------------------------------------- */
 availableUpgrades.forEach((upgrade) => {
   const btn = document.createElement("button");
@@ -109,31 +101,22 @@ availableUpgrades.forEach((upgrade) => {
 
   upgradesContainer.appendChild(btn);
 
-  /* -----------------------------------------------
-      PURCHASE LOGIC
-     Runs whenever the player buys an upgrade
-  ------------------------------------------------ */
   btn.addEventListener("click", () => {
     if (honey >= upgrade.cost) {
       honey -= upgrade.cost;
       upgrade.count++;
       productionRate += upgrade.rate;
 
-      // Cost inflation (15% increase per purchase)
+      // Cost increases by 15%
       upgrade.cost = parseFloat((upgrade.cost * 1.15).toFixed(2));
 
       updateDisplay();
-
-      console.log(
-        `${upgrade.name} purchased! Total: ${upgrade.count}, new cost: ${upgrade.cost}`,
-      );
     }
   });
 });
 
 /* ----------------------------------------------------
-    UPDATE DISPLAY FUNCTION
-   Refreshes honey count, production rate, and button states.
+    UI UPDATE FUNCTION
 ----------------------------------------------------- */
 function updateDisplay() {
   honeyDisplay.textContent = `${honey.toFixed(1)} honey collected`;
@@ -143,11 +126,9 @@ function updateDisplay() {
     )
   } honey/sec`;
 
-  // Enable or disable buttons depending on honey
   availableUpgrades.forEach((upgrade) => {
     const btn = document.getElementById(upgrade.id)! as HTMLButtonElement;
     btn.disabled = honey < upgrade.cost;
-
     btn.textContent = `${upgrade.name} (${
       upgrade.cost.toFixed(
         1,
@@ -158,31 +139,27 @@ function updateDisplay() {
 }
 
 /* ----------------------------------------------------
-    MANUAL HARVESTING
-   Player clicks the button to generate 1 honey.
+    MANUAL HARVESTING (NO LOGS)
 ----------------------------------------------------- */
 harvestButton.addEventListener("click", () => {
   honey++;
   updateDisplay();
-  console.log("Manual harvest:", honey);
 });
 
 /* ----------------------------------------------------
-    GAME LOOP (PASSIVE INCOME)
-   Uses requestAnimationFrame for smooth incremental updates.
+    GAME LOOP
 ----------------------------------------------------- */
 let lastTime = performance.now();
 
 function update(currentTime: number) {
-  const deltaTime = (currentTime - lastTime) / 1000; // Convert ms → sec
+  const deltaTime = (currentTime - lastTime) / 1000;
   lastTime = currentTime;
 
-  honey += productionRate * deltaTime; // Auto-production based on time
+  honey += productionRate * deltaTime;
   updateDisplay();
 
-  requestAnimationFrame(update); // Continue loop
+  requestAnimationFrame(update);
 }
 
-// Initial UI setup + start game loop
 updateDisplay();
 requestAnimationFrame(update);
