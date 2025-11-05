@@ -4,8 +4,8 @@ console.log("🎮 CMPM 121 - Starting...");
 let honey: number = 0;
 let productionRate: number = 0; // honey per second
 
-// Define the Item interface
-interface Item {
+// Rename Item → Upgrade for domain clarity
+interface Upgrade {
   id: string;
   name: string;
   cost: number;
@@ -14,8 +14,8 @@ interface Item {
   description: string;
 }
 
-// Data-driven list of all purchasable items
-const availableItems: Item[] = [
+// Rename availableItems → availableUpgrades
+const availableUpgrades: Upgrade[] = [
   {
     id: "workerBee",
     name: "🐝 Worker Bee",
@@ -69,66 +69,68 @@ document.body.innerHTML = `
 
   <button id="harvest"></button>
 
-  <div id="items"></div>
+  <div id="upgrades"></div>
 `;
 
 // Grab DOM references
 const harvestButton = document.getElementById("harvest")!;
 const honeyDisplay = document.getElementById("honeyDisplay")!;
 const rateDisplay = document.getElementById("rateDisplay")!;
-const itemsContainer = document.getElementById("items")!;
+const upgradesContainer = document.getElementById("upgrades")!;
 
 // Main harvest button
 harvestButton.innerHTML = "🍯";
 
-// Dynamically create buttons for all items
-availableItems.forEach((item) => {
+// Create buttons for all upgrades
+availableUpgrades.forEach((upgrade) => {
   const btn = document.createElement("button");
-  btn.id = item.id;
-  btn.textContent = `${item.name} (${item.cost.toFixed(1)} honey)`;
+  btn.id = upgrade.id;
+  btn.textContent = `${upgrade.name} (${upgrade.cost.toFixed(1)} honey)`;
   btn.disabled = true;
 
-  // Tooltip / hover text shows description
-  btn.title = item.description;
-
-  itemsContainer.appendChild(btn);
+  btn.title = upgrade.description;
+  upgradesContainer.appendChild(btn);
 
   // Purchase logic
   btn.addEventListener("click", () => {
-    if (honey >= item.cost) {
-      honey -= item.cost;
-      item.count++;
-      productionRate += item.rate;
+    if (honey >= upgrade.cost) {
+      honey -= upgrade.cost;
+      upgrade.count++;
+      productionRate += upgrade.rate;
 
-      // Increase cost by 15% after each purchase
-      item.cost = parseFloat((item.cost * 1.15).toFixed(2));
+      // cost inflation
+      upgrade.cost = parseFloat((upgrade.cost * 1.15).toFixed(2));
 
       updateDisplay();
       console.log(
-        `${item.name} purchased! Total: ${item.count}, new cost: ${item.cost}`,
+        `${upgrade.name} purchased! Total: ${upgrade.count}, new cost: ${upgrade.cost}`,
       );
     }
   });
 });
 
-// Update displays and enable/disable buttons
+// Update UI elements and button availability
 function updateDisplay() {
   honeyDisplay.textContent = `${honey.toFixed(1)} honey collected`;
   rateDisplay.textContent = `Production rate: ${
-    productionRate.toFixed(1)
+    productionRate.toFixed(
+      1,
+    )
   } honey/sec`;
 
-  availableItems.forEach((item) => {
-    const btn = document.getElementById(item.id)! as HTMLButtonElement;
-    btn.disabled = honey < item.cost;
-    btn.textContent = `${item.name} (${
-      item.cost.toFixed(1)
-    } honey) — Owned: ${item.count}`;
-    btn.title = item.description;
+  availableUpgrades.forEach((upgrade) => {
+    const btn = document.getElementById(upgrade.id)! as HTMLButtonElement;
+    btn.disabled = honey < upgrade.cost;
+    btn.textContent = `${upgrade.name} (${
+      upgrade.cost.toFixed(
+        1,
+      )
+    } honey) — Owned: ${upgrade.count}`;
+    btn.title = upgrade.description;
   });
 }
 
-// Manual harvest (clicking)
+// Manual harvest
 harvestButton.addEventListener("click", () => {
   honey++;
   updateDisplay();
